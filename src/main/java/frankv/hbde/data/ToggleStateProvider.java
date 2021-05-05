@@ -14,7 +14,7 @@ public class ToggleStateProvider implements ICapabilitySerializable<CompoundNBT>
     private final ToggleState toggleState = new ToggleState();
     private final LazyOptional<IToggleState> toggleStateLazyOptional = LazyOptional.of(() -> toggleState);
 
-    public void invalidata(){
+    public void invalidate(){
         toggleStateLazyOptional.invalidate();
     }
 

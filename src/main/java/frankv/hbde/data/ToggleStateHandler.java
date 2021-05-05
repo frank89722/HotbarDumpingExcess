@@ -30,7 +30,7 @@ public class ToggleStateHandler {
         if (event.getObject() instanceof PlayerEntity) {
             ToggleStateProvider provider = new ToggleStateProvider();
             event.addCapability(new ResourceLocation(HBDE.MODID, "destate"), provider);
-            event.addListener(provider::invalidata);
+            event.addListener(provider::invalidate);
             safeSendToClient((PlayerEntity) event.getObject());
             LOGGER.debug("destate set!");
         }
@@ -76,39 +76,6 @@ public class ToggleStateHandler {
             }
             ts.setToggleDEState(toggleState);
             safeSendToClient(player);
-        });
-    }
-
-    public static void dump(EntityItemPickupEvent event){
-        PlayerEntity player = event.getPlayer();
-        if (player == null) return;
-
-        final ItemStack itemPicked = event.getItem().getItem();
-        if (itemPicked.isEmpty()) return;
-
-        PlayerInventory inv = player.inventory;
-
-        player.getCapability(CapabilityToggleState.TOGGLE_STATE_STORAGE).ifPresent(ts -> {
-
-            int[] toggleState = ts.getToggleDEState();
-            int newCount = 0;
-
-            boolean shouldDump = false;
-            for (int i=0; i<9; i++){
-                if(toggleState[i] == 1){
-                    if (!inv.getItem(i).isEmpty() && inv.getItem(i).sameItem(itemPicked)){
-                        if(inv.getItem(i).getCount() + itemPicked.getCount() >= inv.getItem(i).getMaxStackSize()) {
-                            shouldDump = true;
-                            if (newCount < inv.getItem(i).getMaxStackSize() - inv.getItem(i).getCount()){
-                                newCount = inv.getItem(i).getMaxStackSize() - inv.getItem(i).getCount();
-                            }
-                        }
-                    }
-                }
-            }
-               if(shouldDump){
-                   itemPicked.setCount(newCount);
-               }
         });
     }
 }

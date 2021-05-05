@@ -4,8 +4,13 @@ import frankv.hbde.data.CapabilityToggleState;
 import frankv.hbde.data.ToggleStateHandler;
 import frankv.hbde.network.NetworkHandler;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -14,7 +19,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod("hbde")
+@Mod(HBDE.MODID)
 public class HBDE {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "hbde";
@@ -27,7 +32,6 @@ public class HBDE {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 
         MinecraftForge.EVENT_BUS.register(this);
-
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -38,16 +42,45 @@ public class HBDE {
         MinecraftForge.EVENT_BUS.addGenericListener(Entity.class,ToggleStateHandler::attachCapability);
         MinecraftForge.EVENT_BUS.addListener(ToggleStateHandler::playerClone);
         MinecraftForge.EVENT_BUS.addListener(ToggleStateHandler::playerTick);
-        MinecraftForge.EVENT_BUS.addListener(ToggleStateHandler::dump);
-
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
 
         ClientEvents.setup();
+        MinecraftForge.EVENT_BUS.register(new ClientEvents());
+    }
 
-        //DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> MinecraftForge.EVENT_BUS.register(new ClientEvents()));
-        MinecraftForge.EVENT_BUS.addListener(ClientEvents::keyEvent);
-        MinecraftForge.EVENT_BUS.addListener(ClientRender::onRender);
+    @SubscribeEvent
+    public void dump(EntityItemPickupEvent event){
+        PlayerEntity player = event.getPlayer();
+        if (player == null) return;
+
+        final ItemStack itemPicked = event.getItem().getItem();
+        if (itemPicked.isEmpty()) return;
+
+        PlayerInventory inv = player.inventory;
+
+        player.getCapability(CapabilityToggleState.TOGGLE_STATE_STORAGE).ifPresent(ts -> {
+
+            int[] toggleState = ts.getToggleDEState();
+            int newCount = 0;
+
+            boolean shouldDump = false;
+            for (int i=0; i<9; i++){
+                if(toggleState[i] == 1){
+                    if (!inv.getItem(i).isEmpty() && inv.getItem(i).sameItem(itemPicked)){
+                        if(inv.getItem(i).getCount() + itemPicked.getCount() >= inv.getItem(i).getMaxStackSize()) {
+                            shouldDump = true;
+                            if (newCount < inv.getItem(i).getMaxStackSize() - inv.getItem(i).getCount()){
+                                newCount = inv.getItem(i).getMaxStackSize() - inv.getItem(i).getCount();
+                            }
+                        }
+                    }
+                }
+            }
+            if(shouldDump){
+                itemPicked.setCount(newCount);
+            }
+        });
     }
 }
