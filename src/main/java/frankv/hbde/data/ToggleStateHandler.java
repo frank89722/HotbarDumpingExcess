@@ -18,18 +18,20 @@ import org.apache.logging.log4j.Logger;
 public class ToggleStateHandler {
     private static Logger LOGGER = HBDE.getLOGGER();
 
+    public static void safeSendToClient(PlayerEntity player) {
+        if (player instanceof ServerPlayerEntity) {
+            player.getCapability(CapabilityToggleState.TOGGLE_STATE_STORAGE).ifPresent(ts -> {
+                NetworkHandler.sendToClient(new PacketDataSlots(ts.getToggleDEState()), (ServerPlayerEntity) player);
+            });
+        }
+    }
+
     public static void attachCapability(AttachCapabilitiesEvent<Entity> event){
         if (event.getObject() instanceof PlayerEntity) {
             ToggleStateProvider provider = new ToggleStateProvider();
             event.addCapability(new ResourceLocation(HBDE.MODID, "destate"), provider);
             event.addListener(provider::invalidata);
-
-            PlayerEntity player = (PlayerEntity) event.getObject();
-            if (player instanceof ServerPlayerEntity) {
-                player.getCapability(CapabilityToggleState.TOGGLE_STATE_STORAGE).ifPresent(ts -> {
-                    NetworkHandler.sendToClient(new PacketDataSlots(ts.getToggleDEState()), (ServerPlayerEntity) player);
-                });
-            }
+            safeSendToClient((PlayerEntity) event.getObject());
             LOGGER.debug("destate set!");
         }
     }
@@ -40,9 +42,8 @@ public class ToggleStateHandler {
             if(!player.inventory.getItem(selected).isEmpty()){
                 ts.toggleDEState(selected);
             }
-
-            NetworkHandler.sendToClient(new PacketDataSlots(toggleState), (ServerPlayerEntity) player);
-            LOGGER.debug(selected + " toggled, now: " + toggleState[selected]);
+            safeSendToClient(player);
+            LOGGER.debug(player.getStringUUID() + " " + selected + " toggled, now: " + toggleState[selected]);
         });
     }
 
@@ -53,6 +54,7 @@ public class ToggleStateHandler {
             event.getOriginal().getCapability(CapabilityToggleState.TOGGLE_STATE_STORAGE).ifPresent(oldts -> {
                 ts.setToggleDEState(oldts.getToggleDEState());
             });
+            safeSendToClient(player);
             LOGGER.debug("Cloned");
         });
     }
@@ -61,8 +63,8 @@ public class ToggleStateHandler {
         PlayerEntity player = event.player;
         PlayerInventory inv = player.inventory;
 
-        if(!(player instanceof ServerPlayerEntity)) return;
         player.getCapability(CapabilityToggleState.TOGGLE_STATE_STORAGE).ifPresent(ts -> {
+            if(ts.getToggleDEState() == null) return;
             int[] toggleState = ts.getToggleDEState();
 
             for(int i=0; i<9; i++){
@@ -72,9 +74,8 @@ public class ToggleStateHandler {
                     }
                 }
             }
-
             ts.setToggleDEState(toggleState);
-            NetworkHandler.sendToClient(new PacketDataSlots(toggleState), (ServerPlayerEntity) player);
+            safeSendToClient(player);
         });
     }
 
