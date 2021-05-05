@@ -32,7 +32,7 @@ public class ToggleStateHandler {
             event.addCapability(new ResourceLocation(HBDE.MODID, "destate"), provider);
             event.addListener(provider::invalidate);
             safeSendToClient((PlayerEntity) event.getObject());
-            LOGGER.debug("destate set!");
+            //LOGGER.debug("destate set!");
         }
     }
 
@@ -43,7 +43,7 @@ public class ToggleStateHandler {
                 ts.toggleDEState(selected);
             }
             safeSendToClient(player);
-            LOGGER.debug(player.getStringUUID() + " " + selected + " toggled, now: " + toggleState[selected]);
+            //LOGGER.debug(player.getStringUUID() + " " + selected + " toggled, now: " + toggleState[selected]);
         });
     }
 
@@ -55,7 +55,7 @@ public class ToggleStateHandler {
                 ts.setToggleDEState(oldts.getToggleDEState());
             });
             safeSendToClient(player);
-            LOGGER.debug("Cloned");
+            //LOGGER.debug("Cloned");
         });
     }
 
