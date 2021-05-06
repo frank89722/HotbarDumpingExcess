@@ -21,7 +21,7 @@ public class ToggleStateProvider implements ICapabilitySerializable<CompoundNBT>
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return toggleStateLazyOptional.cast();
+        return CapabilityToggleState.TOGGLE_STATE_STORAGE.orEmpty(cap, toggleStateLazyOptional);
     }
 
     @Override
