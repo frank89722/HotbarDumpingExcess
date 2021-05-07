@@ -19,6 +19,10 @@ archivesBaseName = 'hbde'
 java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+
+println("##[set-output name=modid;]${archivesBaseName}")
+println("##[set-output name=version;]${version}")
+
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // Channel:   Version:
