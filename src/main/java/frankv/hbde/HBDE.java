@@ -19,8 +19,8 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(HBDE.MODID)
 public class HBDE {
-    private static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "hbde";
+    private static final Logger LOGGER = LogManager.getLogger();
     public static Logger getLOGGER() {
         return LOGGER;
     }
@@ -45,6 +45,7 @@ public class HBDE {
     private void doClientStuff(final FMLClientSetupEvent event) {
 
         ClientEvents.setup();
+
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
     }
 

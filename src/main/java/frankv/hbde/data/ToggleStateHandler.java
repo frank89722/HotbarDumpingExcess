@@ -11,10 +11,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import org.apache.logging.log4j.Logger;
 
 public class ToggleStateHandler {
-    private static Logger LOGGER = HBDE.getLOGGER();
 
     public static void safeSendToClient(PlayerEntity player) {
         if (player instanceof ServerPlayerEntity) {
@@ -30,7 +28,6 @@ public class ToggleStateHandler {
             event.addCapability(new ResourceLocation(HBDE.MODID, "destate"), provider);
             event.addListener(provider::invalidate);
             safeSendToClient((PlayerEntity) event.getObject());
-            //LOGGER.debug("destate set!");
         }
     }
 
@@ -41,7 +38,6 @@ public class ToggleStateHandler {
                 ts.toggleDEState(selected);
             }
             safeSendToClient(player);
-            //LOGGER.debug(player.getStringUUID() + " " + selected + " toggled, now: " + toggleState[selected]);
         });
     }
 
@@ -53,7 +49,6 @@ public class ToggleStateHandler {
                 ts.setToggleDEState(oldts.getToggleDEState());
             });
             safeSendToClient(player);
-            //LOGGER.debug("Cloned");
         });
     }
 
