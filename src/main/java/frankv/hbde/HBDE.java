@@ -77,14 +77,14 @@ public class HBDE {
                         }
                         if (totalItems + itemPicked.getCount() >= maxSize) {
                             shouldDump = true;
-                            if (newCount < maxSize - totalItems) {
-                                newCount = maxSize - totalItems;
-                            }
+                            final int newSize = maxSize - totalItems;
+                            if (newCount < newSize) newCount = newSize;
                         }
                     }
                 }
             }
             if(shouldDump){
+                event.getPlayer().take(event.getItem(), event.getItem().getItem().getCount());
                 itemPicked.setCount(newCount);
             }
         });
