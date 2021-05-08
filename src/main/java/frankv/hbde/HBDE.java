@@ -75,7 +75,6 @@ public class HBDE {
                                 totalItems += inv.getItem(k).getCount();
                             }
                         }
-                        LOGGER.debug("max:" + Integer.toString(maxSize) + " ,total:" + Integer.toString(totalItems));
                         if (totalItems + itemPicked.getCount() >= maxSize) {
                             shouldDump = true;
                             if (newCount < maxSize - totalItems) {
