@@ -34,12 +34,15 @@ jobs:
     - name: Build with Gradle
       id: build
       run: ./gradlew build
-      
+
+    - name: Rename
+      run: mv ./build/libs/${{ steps.build.outputs.modid }}-${{ steps.build.outputs.version }}.jar ./build/libs/${{ steps.build.outputs.modid }}-${{ steps.build.outputs.version }}-${{ github.run_number }}.jar
+
     - name: "CF upload"
       uses: itsmeow/curseforge-upload@master
       with:
         changelog: " "
-        file_path: "build/libs/${{ steps.build.outputs.modid }}-${{ steps.build.outputs.version }}.jar"
+        file_path: "build/libs/${{ steps.build.outputs.modid }}-${{ steps.build.outputs.version }}-${{ github.run_number }}.jar"
         game_endpoint: minecraft
         game_versions: Java 8,Java 9,Java 10,Forge,Minecraft 1.16:1.16.5
         project_id: 478988
