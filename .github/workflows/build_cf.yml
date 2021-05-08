@@ -38,9 +38,10 @@ jobs:
     - name: "CF upload"
       uses: itsmeow/curseforge-upload@master
       with:
-        file_path: "build/libs/${{ steps.build.outputs.modid }}-${{ steps.build.outputs.version }}.jar
+        changelog: " "
+        file_path: "build/libs/${{ steps.build.outputs.modid }}-${{ steps.build.outputs.version }}.jar"
         game_endpoint: minecraft
-        game_versions: Java 8, Java 9, Java 10, Forge, Minecraft 1.15:1.16.5
+        game_versions: Java 8,Java 9,Java 10,Forge,Minecraft 1.16:1.16.5
         project_id: 478988
         release_type: alpha
         token: "${{ secrets.CF_TOKEN }}"
