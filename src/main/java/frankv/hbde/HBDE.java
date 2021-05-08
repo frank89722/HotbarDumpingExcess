@@ -62,15 +62,24 @@ public class HBDE {
 
             int[] toggleState = ts.getToggleDEState();
             int newCount = 0;
+            int maxSize, totalItems;
 
             boolean shouldDump = false;
             for (int i=0; i<9; i++){
                 if(toggleState[i] == 1){
-                    if (!inv.getItem(i).isEmpty() && inv.getItem(i).sameItem(itemPicked)){
-                        if(inv.getItem(i).getCount() + itemPicked.getCount() >= inv.getItem(i).getMaxStackSize()) {
+                    maxSize = totalItems = 0;
+                    if(inv.getItem(i).sameItem(itemPicked)) {
+                        for (int k = 0; k < inv.items.size(); k++) {
+                            if (!inv.getItem(k).isEmpty() && inv.getItem(k).sameItem(inv.getItem(i))) {
+                                maxSize += inv.getItem(i).getMaxStackSize();
+                                totalItems += inv.getItem(k).getCount();
+                            }
+                        }
+                        LOGGER.debug("max:" + Integer.toString(maxSize) + " ,total:" + Integer.toString(totalItems));
+                        if (totalItems + itemPicked.getCount() >= maxSize) {
                             shouldDump = true;
-                            if (newCount < inv.getItem(i).getMaxStackSize() - inv.getItem(i).getCount()){
-                                newCount = inv.getItem(i).getMaxStackSize() - inv.getItem(i).getCount();
+                            if (newCount < maxSize - totalItems) {
+                                newCount = maxSize - totalItems;
                             }
                         }
                     }
