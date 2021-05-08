@@ -62,31 +62,36 @@ public class HBDE {
         player.getCapability(CapabilityToggleState.TOGGLE_STATE_STORAGE).ifPresent(ts -> {
 
             int[] toggleState = ts.getToggleDEState();
-            int newCount = 0;
-            int maxSize, totalItems;
 
             boolean shouldDump = false;
             for (int i=0; i<9; i++){
                 if(toggleState[i] == 1){
-                    maxSize = totalItems = 0;
-                    if(inv.getItem(i).sameItem(itemPicked)) {
+                    final ItemStack targetItem = inv.getItem(i);
+                    if(targetItem.sameItem(itemPicked)) {
+                        final int maxSize = targetItem.getMaxStackSize();
                         for (int k = 0; k < inv.items.size(); k++) {
-                            if (!inv.getItem(k).isEmpty() && inv.getItem(k).sameItem(inv.getItem(i))) {
-                                maxSize += inv.getItem(i).getMaxStackSize();
-                                totalItems += inv.getItem(k).getCount();
+                            final ItemStack slotItem = inv.getItem(k);
+                            final int itemPickedCount = itemPicked.getCount();
+                            final int slotItemCount = slotItem.getCount();
+                            final int totalCount = itemPickedCount + slotItemCount;
+                            if (slotItem.sameItem(targetItem)) {
+                                if(totalCount >= maxSize){
+                                    itemPicked.setCount(itemPickedCount - (maxSize - slotItemCount));
+                                    slotItem.setCount(maxSize);
+                                } else {
+                                    slotItem.setCount(totalCount);
+                                    itemPicked.setCount(0);
+                                }
+                                shouldDump = true;
+                                if(itemPicked.getCount() == 0) break;
                             }
-                        }
-                        if (totalItems + itemPicked.getCount() >= maxSize) {
-                            shouldDump = true;
-                            final int newSize = maxSize - totalItems;
-                            if (newCount < newSize) newCount = newSize;
                         }
                     }
                 }
             }
-            if(shouldDump){
+            if(shouldDump) {
                 event.getPlayer().take(event.getItem(), event.getItem().getItem().getCount());
-                itemPicked.setCount(newCount);
+                itemPicked.setCount(0);
             }
         });
     }
