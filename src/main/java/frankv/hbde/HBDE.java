@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -49,7 +50,7 @@ public class HBDE {
         MinecraftForge.EVENT_BUS.register(new ClientEvents());
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void dump(EntityItemPickupEvent event){
         PlayerEntity player = event.getPlayer();
         if (player == null) return;
@@ -71,10 +72,10 @@ public class HBDE {
                         final int maxSize = targetItem.getMaxStackSize();
                         for (int k = 0; k < inv.items.size(); k++) {
                             final ItemStack slotItem = inv.getItem(k);
-                            final int itemPickedCount = itemPicked.getCount();
-                            final int slotItemCount = slotItem.getCount();
-                            final int totalCount = itemPickedCount + slotItemCount;
                             if (slotItem.sameItem(targetItem)) {
+                                final int itemPickedCount = itemPicked.getCount();
+                                final int slotItemCount = slotItem.getCount();
+                                final int totalCount = itemPickedCount + slotItemCount;
                                 if(totalCount >= maxSize){
                                     itemPicked.setCount(itemPickedCount - (maxSize - slotItemCount));
                                     slotItem.setCount(maxSize);
