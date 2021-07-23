@@ -1,8 +1,8 @@
 package frankv.hbde.network;
 
-import frankv.hbde.ClientEvents;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import frankv.hbde.ClientEventsHandler;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -13,17 +13,17 @@ public class PacketDataSlots {
         this.data = data;
     }
 
-    public static PacketDataSlots fromBytes(PacketBuffer buf){
+    public static PacketDataSlots fromBytes(FriendlyByteBuf buf){
         return new PacketDataSlots(buf.readVarIntArray());
     }
 
-    public static void toBytes(PacketDataSlots msg, PacketBuffer buf) {
+    public static void toBytes(PacketDataSlots msg, FriendlyByteBuf buf) {
         buf.writeVarIntArray(msg.data);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ClientEvents.setClientToggleData(data);
+            ClientEventsHandler.setClientToggleData(data);
         });
         ctx.get().setPacketHandled(true);
     }

@@ -1,4 +1,4 @@
-package frankv.hbde.data;
+package frankv.hbde.capability;
 
 public class ToggleState implements IToggleState{
     private int[] slotsDEState = new int[9];

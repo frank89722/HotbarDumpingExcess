@@ -1,12 +1,12 @@
 package frankv.hbde;
 
-import frankv.hbde.data.CapabilityToggleState;
-import frankv.hbde.data.ToggleStateHandler;
+import frankv.hbde.capability.CapabilityToggleState;
+import frankv.hbde.capability.ToggleStateHandler;
 import frankv.hbde.network.NetworkHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -38,27 +38,27 @@ public class HBDE {
         CapabilityToggleState.register();
         NetworkHandler.register();
 
-        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class,ToggleStateHandler::attachCapability);
+        MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ToggleStateHandler::attachCapability);
         MinecraftForge.EVENT_BUS.addListener(ToggleStateHandler::playerClone);
         MinecraftForge.EVENT_BUS.addListener(ToggleStateHandler::playerTick);
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
 
-        ClientEvents.setup();
+        ClientEventsHandler.setup();
 
-        MinecraftForge.EVENT_BUS.register(new ClientEvents());
+        MinecraftForge.EVENT_BUS.register(new ClientEventsHandler());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void dump(EntityItemPickupEvent event){
-        PlayerEntity player = event.getPlayer();
+        Player player = event.getPlayer();
         if (player == null) return;
 
         final ItemStack itemPicked = event.getItem().getItem();
         if (itemPicked.isEmpty()) return;
 
-        PlayerInventory inv = player.inventory;
+        Inventory inv = player.getInventory();
 
         player.getCapability(CapabilityToggleState.TOGGLE_STATE_STORAGE).ifPresent(ts -> {
 

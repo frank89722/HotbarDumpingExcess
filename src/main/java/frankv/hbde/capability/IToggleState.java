@@ -1,4 +1,4 @@
-package frankv.hbde.data;
+package frankv.hbde.capability;
 
 public interface IToggleState {
     void setToggleDEState(int slots[]);
