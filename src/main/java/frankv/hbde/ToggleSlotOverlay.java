@@ -1,5 +1,6 @@
 package frankv.hbde;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
@@ -18,7 +19,8 @@ public class ToggleSlotOverlay extends GuiComponent {
     }
 
     public void render(int i) {
-        mc.textureManager.bindForSetup(texture);
+        //mc.textureManager.bindForSetup(texture);
+        RenderSystem.setShaderTexture(0, texture);
         blit(new PoseStack(),
                 width / 2 - 90 + i * 20 + 2,
                 height - 16 - 3,
