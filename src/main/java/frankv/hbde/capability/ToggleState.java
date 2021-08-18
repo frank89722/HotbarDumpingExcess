@@ -10,7 +10,7 @@ public class ToggleState implements IToggleState{
 
     @Override
     public void toggleDEState(int select) {
-        if(this.slotsDEState[select] == 0 ){
+        if(this.slotsDEState[select] == 0){
             this.slotsDEState[select] = 1;
         } else {
             this.slotsDEState[select] = 0;

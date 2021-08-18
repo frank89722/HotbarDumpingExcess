@@ -60,12 +60,12 @@ public class ToggleStateHandler {
             int[] toggleState = ts.getToggleDEState();
 
             for(int i : toggleState){
-                if(i == 1) {
-                    if(inv.getItem(i).isEmpty()) {
-                        toggleState[i] = 0;
-                    }
+                if(i == 0) continue;
+                if(inv.getItem(i).isEmpty()) {
+                    toggleState[i] = 0;
                 }
             }
+
             ts.setToggleDEState(toggleState);
             safeSendToClient(player);
         });

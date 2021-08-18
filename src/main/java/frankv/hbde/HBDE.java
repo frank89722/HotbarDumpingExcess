@@ -34,7 +34,6 @@ public class HBDE {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-
         CapabilityToggleState.register();
         NetworkHandler.register();
 
@@ -44,7 +43,6 @@ public class HBDE {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-
         ClientEventsHandler.setup();
 
         MinecraftForge.EVENT_BUS.register(new ClientEventsHandler());
@@ -61,11 +59,10 @@ public class HBDE {
         Inventory inv = player.getInventory();
 
         player.getCapability(CapabilityToggleState.TOGGLE_STATE_STORAGE).ifPresent(ts -> {
-
             int[] toggleState = ts.getToggleDEState();
-
             boolean shouldDump = false;
-            for (int i=0; i<9; i++){
+
+            for (int i=0; i<toggleState.length; i++){
                 if(toggleState[i] == 1){
                     final ItemStack targetItem = inv.getItem(i);
                     if(targetItem.sameItem(itemPicked)) {

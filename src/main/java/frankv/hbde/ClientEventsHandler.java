@@ -15,19 +15,24 @@ import net.minecraftforge.fmlclient.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientEventsHandler {
-    public static KeyMapping TOGGLEDE;
+    private static KeyMapping TOGGLEDE;
+    private static Minecraft mc;
+    private static ToggleSlotOverlay overlay;
 
     public static void setup(){
         TOGGLEDE = new KeyMapping("keybind.hbde.togglede", GLFW.GLFW_KEY_COMMA, "keybind.categories.hbde");
+        mc = Minecraft.getInstance();
+        overlay = new ToggleSlotOverlay();
         ClientRegistry.registerKeyBinding(TOGGLEDE);
     }
 
     @SubscribeEvent
     public void keyEvent(InputEvent.KeyInputEvent event){
-        if (Minecraft.getInstance().player == null) return;
-        if (event.getAction() != GLFW.GLFW_PRESS) return;
+        Player player = mc.player;
+
+        if(player == null || event.getAction() != GLFW.GLFW_PRESS) return;
+
         if (TOGGLEDE.consumeClick()){
-            Player player = Minecraft.getInstance().player;
             ToggleStateHandler.requestToggleState(player, player.getInventory().selected);
             NetworkHandler.CHANNEL_INSTANCE.sendToServer(new PacketToggleTrigger());
         }
@@ -35,14 +40,13 @@ public class ClientEventsHandler {
 
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post event){
-        if(event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
-            Minecraft mc = Minecraft.getInstance();
-            Player player = mc.player;
-            ToggleSlotOverlay overlay = new ToggleSlotOverlay();
+        Player player = mc.player;
 
-            assert player != null;
+        if(player == null) return;
+
+        if(event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             player.getCapability(CapabilityToggleState.TOGGLE_STATE_STORAGE).ifPresent(ts -> {
-                int[] slots = ts.getToggleDEState();
+                final int[] slots = ts.getToggleDEState();
                 for(int i=0; i<slots.length; i++){
                     if(slots[i] == 1) {
                         overlay.render(i);
@@ -53,9 +57,10 @@ public class ClientEventsHandler {
     }
 
     public static void setClientToggleData(int[] svData){
-        if(Minecraft.getInstance().player == null) return;
+        Player player = mc.player;
 
-        Player player = Minecraft.getInstance().player;
+        if(player == null) return;
+
         player.getCapability(CapabilityToggleState.TOGGLE_STATE_STORAGE).ifPresent(ts -> {
             ts.setToggleDEState(svData);
         });
