@@ -5,7 +5,7 @@ name: Build and upload to CF
 
 on:
   push:
-    branches: [ 1.17.x ]
+    branches: [ 1.18.x ]
 
 jobs:
   build:
@@ -15,10 +15,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Set up JDK 16
+    - name: Set up JDK 17
       uses: actions/setup-java@v1
       with:
-        java-version: 16
+        java-version: 17
         
     - uses: actions/cache@v2
       with:
@@ -44,7 +44,7 @@ jobs:
         changelog: " "
         file_path: "build/libs/${{ steps.build.outputs.modid }}-${{ steps.build.outputs.version }}-${{ github.run_number }}.jar"
         game_endpoint: minecraft
-        game_versions: Forge,Minecraft 1.17:1.17.1
+        game_versions: Forge,Minecraft 1.18:1.18
         project_id: 478988
         release_type: alpha
         token: "${{ secrets.CF_TOKEN }}"

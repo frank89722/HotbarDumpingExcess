@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -34,8 +35,8 @@ public class HBDE {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        CapabilityToggleState.register();
         NetworkHandler.register();
+        MinecraftForge.EVENT_BUS.addListener(CapabilityToggleState::capRegister);
 
         MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, ToggleStateHandler::attachCapability);
         MinecraftForge.EVENT_BUS.addListener(ToggleStateHandler::playerClone);
